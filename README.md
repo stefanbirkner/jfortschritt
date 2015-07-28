@@ -18,26 +18,24 @@ JFortschritt is available from [Maven Central](http://search.maven.org/).
     <dependency>
       <groupId>com.github.stefanbirkner</groupId>
       <artifactId>jfortschritt</artifactId>
-      <version>0.1.0</version>
+      <version>0.2.0-SNAPSHOT</version>
     </dependency>
 
 
 ## Usage
 
-Currently the library provides only one type progress bar: the
+Currently the library provides only one type of progress bar: the
 `SingleStepProgressBar`. First create a new progress bar.
 
     import com.github.stefanbirkner.jfortschritt.*;
 
     ...
 
-    SingleStepProgressBar progressBar = new SingleStepProgressBarBuilder()
-      .setNumberOfSteps(42)
-      .toProgressBar();
+    SingleStepProgressBar progressBar = new SingleStepProgressBar();
 
-Start the progress bar:
+Start the progress bar with the number of steps that are needed for completion:
 
-    progressBar.start();
+    progressBar.startWithNumberOfSteps(42);
 
 It immediately prints an empty progress bar:
 
@@ -55,7 +53,6 @@ This is how a progress bar looks like at the end. (It renders a new line
 character, too. Thus additional text starts at a new line.)
 
     [=============================================================>] (42/42)
-    
 
 
 ## Contributing

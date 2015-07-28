@@ -16,48 +16,54 @@ public class SingleStepProgressBarTest {
     private static final int ARBITRARY_NUMBER_OF_STEPS = 42;
     private static final int NUMBER_OF_STEPS_WITH_MULTIPLE_STEPS_PER_CHARACTER = 1_000;
 
-    private SingleStepProgressBar progressBar;
+    private SingleStepProgressBar progressBar = new SingleStepProgressBar();
 
     @Rule
     public final SystemOutRule systemOutRule = new SystemOutRule().enableLog().mute();
 
+    @Test
+    public void progress_bar_cannot_be_started_with_negative_number_of_steps() {
+        Throwable e = exceptionThrownBy(new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                startProgressBarWithNumberOfSteps(-1);
+            }
+        });
+        assertThat(e).isInstanceOf(IllegalArgumentException.class);
+    }
+
     public class after_started {
         @Test
         public void progress_bar_is_empty() {
-            createProgressBarWithArbitraryNumberOfSteps();
-            startProgressBar();
+            startProgressBarWithArbitraryNumberOfSteps();
             assertTextVisibleAtSystemOut().startsWith("[> ").contains(" ]");
         }
 
         @Test
         public void progress_bar_shows_zero_out_of_n_steps_finished() {
-            createProgressBarWithNumberOfSteps(1);
-            startProgressBar();
+            startProgressBarWithNumberOfSteps(1);
             assertTextVisibleAtSystemOut().endsWith("(0/1)");
         }
 
         @Test
         public void progress_bar_separates_the_bar_itself_and_the_count_by_a_space() {
-            createProgressBarWithArbitraryNumberOfSteps();
-            startProgressBar();
+            startProgressBarWithArbitraryNumberOfSteps();
             assertBarAndCountAreSeparatedByASpace();
         }
 
         @Test
         public void progress_bar_is_72_chars_long() {
-            createProgressBarWithArbitraryNumberOfSteps();
-            startProgressBar();
+            startProgressBarWithArbitraryNumberOfSteps();
             assertTextVisibleAtSystemOut().hasSize(72);
         }
 
         @Test
         public void progress_bar_cannot_be_started_again() {
-            createProgressBarWithArbitraryNumberOfSteps();
-            startProgressBar();
+            startProgressBarWithArbitraryNumberOfSteps();
             Throwable e = exceptionThrownBy(new Statement() {
                 @Override
                 public void evaluate() throws Throwable {
-                    startProgressBar();
+                    startProgressBarWithArbitraryNumberOfSteps();
                 }
             });
             assertThat(e).isInstanceOf(IllegalStateException.class);
@@ -67,14 +73,14 @@ public class SingleStepProgressBarTest {
     public class after_first_step {
         @Test
         public void progress_bar_shows_at_least_one_char_progress() {
-            createProgressBarWithArbitraryNumberOfSteps();
+            startProgressBarWithArbitraryNumberOfSteps();
             moveProgressBarNSteps(1);
             assertTextVisibleAtSystemOut().startsWith("[=");
         }
 
         @Test
         public void progress_bar_shows_single_char_progress_for_very_small_proportion() {
-            createProgressBarWithNumberOfSteps(
+            startProgressBarWithNumberOfSteps(
                 NUMBER_OF_STEPS_WITH_MULTIPLE_STEPS_PER_CHARACTER);
             moveProgressBarNSteps(1);
             assertTextVisibleAtSystemOut().startsWith("[=> ");
@@ -82,21 +88,21 @@ public class SingleStepProgressBarTest {
 
         @Test
         public void progress_bar_shows_one_out_of_n_steps_finished() {
-            createProgressBarWithNumberOfSteps(2);
+            startProgressBarWithNumberOfSteps(2);
             moveProgressBarNSteps(1);
             assertTextVisibleAtSystemOut().endsWith("(1/2)");
         }
 
         @Test
         public void progress_bar_separates_the_bar_itself_and_the_count_by_a_space() {
-            createProgressBarWithArbitraryNumberOfSteps();
+            startProgressBarWithArbitraryNumberOfSteps();
             moveProgressBarNSteps(1);
             assertBarAndCountAreSeparatedByASpace();
         }
 
         @Test
         public void progress_bar_is_72_chars_long() {
-            createProgressBarWithArbitraryNumberOfSteps();
+            startProgressBarWithArbitraryNumberOfSteps();
             moveProgressBarNSteps(1);
             assertTextVisibleAtSystemOut().hasSize(72);
         }
@@ -107,38 +113,31 @@ public class SingleStepProgressBarTest {
         public void progress_bar_is_not_completely_filled() {
             //use a very large number of steps so that a single character is
             //more than a single step
-            createProgressBar();
             moveProgressBarToSecondToLastStep();
             assertTextVisibleAtSystemOut().contains("=> ]");
         }
 
         @Test
         public void progress_bar_shows_n_minus_1_out_of_n_steps_finished() {
-            createProgressBar();
             moveProgressBarToSecondToLastStep();
             assertTextVisibleAtSystemOut().endsWith("(999/1000)");
         }
 
         @Test
         public void progress_bar_separates_the_bar_itself_and_the_count_by_a_space() {
-            createProgressBar();
             moveProgressBarToSecondToLastStep();
             assertBarAndCountAreSeparatedByASpace();
         }
 
         @Test
         public void progress_bar_is_72_chars_long() {
-            createProgressBar();
             moveProgressBarToSecondToLastStep();
             assertTextVisibleAtSystemOut().hasSize(72);
         }
 
-        private void createProgressBar() {
-            createProgressBarWithNumberOfSteps(
-                NUMBER_OF_STEPS_WITH_MULTIPLE_STEPS_PER_CHARACTER);
-        }
-
         private void moveProgressBarToSecondToLastStep() {
+            startProgressBarWithNumberOfSteps(
+                NUMBER_OF_STEPS_WITH_MULTIPLE_STEPS_PER_CHARACTER);
             moveProgressBarNSteps(
                 NUMBER_OF_STEPS_WITH_MULTIPLE_STEPS_PER_CHARACTER - 1);
         }
@@ -149,35 +148,35 @@ public class SingleStepProgressBarTest {
         public void progress_bar_is_completely_filled() {
             //use a very large number of steps so that a single character is
             //more than a single step
-            createProgressBarWithNumberOfSteps(1);
+            startProgressBarWithNumberOfSteps(1);
             moveProgressBarNSteps(1);
             assertTextVisibleAtSystemOut().contains("=>]");
         }
 
         @Test
         public void progress_bar_shows_n_out_of_n_steps_finished() {
-            createProgressBarWithNumberOfSteps(42);
+            startProgressBarWithNumberOfSteps(42);
             moveProgressBarNSteps(42);
             assertTextVisibleAtSystemOut().contains("(42/42)");
         }
 
         @Test
         public void progress_bar_is_terminated_with_new_line() {
-            createProgressBarWithNumberOfSteps(42);
+            startProgressBarWithNumberOfSteps(42);
             moveProgressBarNSteps(42);
             assertTextVisibleAtSystemOut().endsWith("\n");
         }
 
         @Test
         public void progress_bar_separates_the_bar_itself_and_the_count_by_a_space() {
-            createProgressBarWithNumberOfSteps(ARBITRARY_NUMBER_OF_STEPS);
+            startProgressBarWithNumberOfSteps(ARBITRARY_NUMBER_OF_STEPS);
             moveProgressBarNSteps(ARBITRARY_NUMBER_OF_STEPS);
             assertBarAndCountAreSeparatedByASpace();
         }
 
         @Test
         public void progress_bar_is_72_chars_long() {
-            createProgressBarWithNumberOfSteps(ARBITRARY_NUMBER_OF_STEPS);
+            startProgressBarWithNumberOfSteps(ARBITRARY_NUMBER_OF_STEPS);
             moveProgressBarNSteps(ARBITRARY_NUMBER_OF_STEPS);
             assertTextVisibleAtSystemOut()
                 .hasSize(72 + 1 /* new line character */);
@@ -185,7 +184,7 @@ public class SingleStepProgressBarTest {
 
         @Test
         public void progress_bar_cannot_be_moved_forward() {
-            createProgressBarWithNumberOfSteps(ARBITRARY_NUMBER_OF_STEPS);
+            startProgressBarWithNumberOfSteps(ARBITRARY_NUMBER_OF_STEPS);
             moveProgressBarNSteps(ARBITRARY_NUMBER_OF_STEPS);
             Throwable e = exceptionThrownBy(new Statement() {
                 @Override
@@ -197,18 +196,12 @@ public class SingleStepProgressBarTest {
         }
     }
 
-    private void createProgressBarWithNumberOfSteps(int numberOfSteps) {
-        progressBar = new SingleStepProgressBarBuilder()
-            .setNumberOfSteps(numberOfSteps)
-            .toProgressBar();
+    private void startProgressBarWithNumberOfSteps(int numberOfSteps) {
+        progressBar.startWithNumberOfSteps(numberOfSteps);
     }
 
-    private void createProgressBarWithArbitraryNumberOfSteps() {
-        createProgressBarWithNumberOfSteps(ARBITRARY_NUMBER_OF_STEPS);
-    }
-
-    private void startProgressBar() {
-        progressBar.start();
+    private void startProgressBarWithArbitraryNumberOfSteps() {
+        startProgressBarWithNumberOfSteps(ARBITRARY_NUMBER_OF_STEPS);
     }
 
     private void moveProgressBarNSteps(int n) {

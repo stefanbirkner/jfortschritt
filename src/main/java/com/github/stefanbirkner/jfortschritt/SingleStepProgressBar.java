@@ -5,18 +5,18 @@ import static java.lang.Math.max;
 import static java.lang.System.out;
 
 /**
- * A progress bar with a finite number of steps. The bar progresses by single
- * steps only. A {@code SingleStepProgressBar} is created by a
- * {@link SingleStepProgressBarBuilder}. (This is in order to avoid a multitude
- * of constructors when features get added.)
+ * A progress bar with a finite number of steps. The bar progresses by a single
+ * step each time {@link #moveForward()} is called.
  * <h2>Usage</h2>
- * <p>Start the progress bar:
- * <pre>{@link #start() progressBar.start()};</pre>
+ * <p>Create a new progress bar and start it with the number of steps that are
+ * needed for completion:
+ * <pre>   SingleStepProgressbar progressBar = new {@code SingleStepProgressbar()};
+ * progressBar.{@link #startWithNumberOfSteps(int) startWithNumberOfSteps(42)};</pre>
  * <p>It immediately prints an empty progress bar:
  * <pre>[&gt;                                                              ] (0/42)</pre>
  * <p>The width of the line is always 72 chars. Now move the progress
  * bar forward.
- * <pre>{@link #moveForward() progressBar.moveForward()};</pre>
+ * <pre>   progressBar.{@link #moveForward()};</pre>
  * <p>and see the result
  * <pre>[==&gt;                                                            ] (1/42)</pre>
  * <p>This is how a progress bar looks like at the end. (It renders a new line
@@ -27,24 +27,25 @@ import static java.lang.System.out;
  */
 public class SingleStepProgressBar {
     private static final int WIDTH = 72;
-    private final int numberOfSteps;
+    private int numberOfSteps;
     private boolean started = false;
     private int currentStep = 0;
-
-    SingleStepProgressBar(int numberOfSteps) {
-        this.numberOfSteps = numberOfSteps;
-    }
 
     /**
      * Start the progress bar. This immediately prints an empty progress bar to
      * {@code System.in}. The progress bar can only be started once.
      *
+     * @param numberOfSteps the number of steps that is needed for the progress
+     *                      bar to be complete.
+     * @throws IllegalArgumentException if {@code numberOfSteps} is negative.
      * @throws IllegalStateException if the progress bar has already
      *                               been started.
-     * @since 0.1.0
+     * @since 0.2.0
      */
-    public void start() throws IllegalStateException {
+    public void startWithNumberOfSteps(int numberOfSteps) throws IllegalStateException {
+        assertNonNegativeNumberOfSteps(numberOfSteps);
         assertNotAlreadyStarted();
+        this.numberOfSteps = numberOfSteps;
         started = true;
         printProgressBar();
     }
@@ -107,6 +108,13 @@ public class SingleStepProgressBar {
         if (started)
             throw new IllegalStateException(
                 "The progress bar has already been started and cannot be started twice.");
+    }
+
+    private void assertNonNegativeNumberOfSteps(int numberOfSteps) {
+        if (numberOfSteps < 0)
+            throw new IllegalArgumentException(
+                "You cannot set number of steps to " + numberOfSteps
+                    + " because it must be a non-negative number.");
     }
 
     private void assertNotAlreadyComplete() throws IllegalStateException {
