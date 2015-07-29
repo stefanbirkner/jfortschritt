@@ -5,27 +5,27 @@ import static java.lang.Math.max;
 import static java.lang.System.out;
 
 /**
- * A progress bar with a finite number of steps. The bar progresses by a single
- * step each time {@link #moveForward()} is called.
+ * A progress line shows the progress of a task using a single line on the
+ * console. It's made up of a progress bar and a counter.
  * <h2>Usage</h2>
- * <p>Create a new progress bar and start it with the number of steps that are
+ * <p>Create a new progress line and start it with the number of steps that are
  * needed for completion:
- * <pre>   SingleStepProgressbar progressBar = new {@code SingleStepProgressbar()};
- * progressBar.{@link #startWithNumberOfSteps(int) startWithNumberOfSteps(42)};</pre>
- * <p>It immediately prints an empty progress bar:
+ * <pre>   ProgressLine progressLine = new {@code ProgressLine()};
+ * progressLine.{@link #startWithNumberOfSteps(int) startWithNumberOfSteps(42)};</pre>
+ * <p>It immediately prints an empty progress bar and the counter:
  * <pre>[&gt;                                                              ] (0/42)</pre>
- * <p>The width of the line is always 72 chars. Now move the progress
- * bar forward.
- * <pre>   progressBar.{@link #moveForward()};</pre>
+ * <p>The width of the line is always 72 chars. Now move the progress line
+ * forward.
+ * <pre>   progressLine.{@link #moveForward()};</pre>
  * <p>and see the result
  * <pre>[==&gt;                                                            ] (1/42)</pre>
- * <p>This is how a progress bar looks like at the end. (It renders a new line
+ * <p>This is how a progress line looks like at the end. (It renders a new line
  * character, too. Thus additional text starts at a new line.)
  * <pre>[=============================================================&gt;] (42/42)</pre>
  *
  * @since 0.1.0
  */
-public class SingleStepProgressBar {
+public class ProgressLine {
     private static final int WIDTH = 72;
     private int numberOfSteps;
     private boolean started = false;
