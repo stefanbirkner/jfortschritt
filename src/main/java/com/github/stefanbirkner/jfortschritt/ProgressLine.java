@@ -22,33 +22,31 @@ import static java.lang.System.out;
  * <p>This is how a progress line looks like at the end. (It renders a new line
  * character, too. Thus additional text starts at a new line.)
  * <pre>[==================================================================== &gt;]</pre>
- * <p>You may add a counter to the progress line.
+ * <p>You may add additional parts to the progress line. E.g. JFortschritt
+ * provides a {@link Counter}, but you can build your own parts by implementing
+ * the interface {@link ProgressLinePart}.
  * <pre>ProgressLine progressLine = new ProgressLine(new Counter());</pre>
- * <p>This is how a progress line looks with a counter.
+ * <p>This is how a progress line looks with the additional parts.
  * <pre>[==&gt;                                                            ] (1/42)</pre>
  *
  * @since 0.1.0
  */
 public class ProgressLine {
     private static final int WIDTH = 72;
-    private final Counter counter;
+    private final ProgressLinePart[] additionalParts;
     private int numberOfSteps;
     private boolean started = false;
     private int currentStep = 0;
 
     /**
-     * Create a progress line with a progress bar only.
+     * Create a progress line with a progress bar and an additional
+     * {@link ProgressLinePart}s. These parts are rendered after the the
+     * progress bar and are separated by a whitespace.
+     * @param additionalParts additional parts that are rendered after
+     *                        the progress bar.
      */
-    public ProgressLine() {
-        this(null);
-    }
-
-    /**
-     * Create a progress line with a progress bar and an optional counter.
-     * @param counter the counter (can be {@code null})
-     */
-    public ProgressLine(Counter counter) {
-        this.counter = counter;
+    public ProgressLine(ProgressLinePart... additionalParts) {
+        this.additionalParts = additionalParts;
     }
 
     /**
@@ -72,8 +70,8 @@ public class ProgressLine {
     }
 
     private void informCounterAboutStart(int numberOfSteps) {
-        if (counter != null)
-            counter.progressLineStarted(numberOfSteps);
+        for (ProgressLinePart part : additionalParts)
+            part.progressLineStarted(numberOfSteps);
     }
 
     /**
@@ -96,13 +94,20 @@ public class ProgressLine {
     }
 
     private void printProgressBar() {
-        String finalPart = (counter == null) ? "]" : "] " + counter.getOutputForStep(currentStep);
+        String finalPart = "]" + getOutputForParts();
         int numberOfEqualSigns = calculateNumberOfEqualSigns(finalPart);
         out.print("[");
         printCharNTimes('=', numberOfEqualSigns);
         out.print(">");
         printCharNTimes(' ', WIDTH - numberOfEqualSigns - 2 - finalPart.length());
         out.print(finalPart);
+    }
+
+    public String getOutputForParts() {
+        StringBuilder output = new StringBuilder();
+        for (ProgressLinePart part : additionalParts)
+            output.append(" ").append(part.getOutputForStep(currentStep));
+        return output.toString();
     }
 
     private int calculateNumberOfEqualSigns(String finalPart) {

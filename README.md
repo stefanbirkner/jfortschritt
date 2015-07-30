@@ -55,11 +55,13 @@ character, too. Thus additional text starts at a new line.)
 
     [=====================================================================>]
 
-You may add a counter to the progress line.
+You may add additional parts to the progress line. E.g. JFortschritt provides
+a counter, but you can build your own parts by implementing the interface
+`ProgressLinePart`.
 
     ProgressLine progressLine = new ProgressLine(new Counter());
 
-This is how a progress line looks with a counter.
+This is how a progress line looks with the additional parts.
 
     [==>                                                            ] (1/42)
 

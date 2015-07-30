@@ -155,51 +155,48 @@ public class ProgressLineTest {
         }
     }
 
-    public class progress_line_with_counter {
-        private final Counter counter = mock(Counter.class);
+    public class progress_line_with_additional_parts {
+        private final ProgressLinePart firstPart = mock(ProgressLinePart.class);
+        private final ProgressLinePart secondPart = mock(ProgressLinePart.class);
 
         @Before
         public void useProgressLineWithCounter() {
-            progressLine = new ProgressLine(counter);
+            progressLine = new ProgressLine(firstPart, secondPart);
         }
 
         @Test
-        public void progress_line_separates_the_bar_and_the_counter_by_a_space() {
-            useCounterWithOutpoutForStep("counter output", 0);
+        public void progress_line_rendesr_the_bar_and_the_parts_separated_by_a_space() {
+            useCountersWithOutpoutForStep(0, "first", "second");
             startProgressLineWithArbitraryNumberOfSteps();
-            assertTextVisibleAtSystemOut().contains("] counter");
+            assertTextVisibleAtSystemOut().contains("] first second");
         }
 
         @Test
-        public void progress_line_renders_counter_at_the_end() {
-            useCounterWithOutpoutForStep("counter output", 0);
-            startProgressLineWithArbitraryNumberOfSteps();
-            assertTextVisibleAtSystemOut().endsWith("counter output");
-        }
-
-        @Test
-        public void progress_line_renders_counter_for_current_number_of_steps() {
-            useCounterWithOutpoutForStep("counter output", 2);
+        public void progress_line_renders_parts_for_current_number_of_steps() {
+            useCountersWithOutpoutForStep(2, "first", "second");
             startProgressLineWithArbitraryNumberOfSteps();
             moveProgressLineNSteps(2);
-            assertTextVisibleAtSystemOut().endsWith("counter output");
+            assertTextVisibleAtSystemOut().endsWith("first second");
         }
 
         @Test
-        public void progress_line_informs_counter_about_start() {
+        public void progress_line_informs_parts_about_start() {
             startProgressLineWithNumberOfSteps(ARBITRARY_NUMBER_OF_STEPS);
-            verify(counter).progressLineStarted(ARBITRARY_NUMBER_OF_STEPS);
+            verify(firstPart).progressLineStarted(ARBITRARY_NUMBER_OF_STEPS);
+            verify(secondPart).progressLineStarted(ARBITRARY_NUMBER_OF_STEPS);
         }
 
         @Test
         public void progress_line_is_72_chars_long() {
-            useCounterWithOutpoutForStep("counter output", 0);
+            useCountersWithOutpoutForStep(0, "first", "second");
             startProgressLineWithArbitraryNumberOfSteps();
             assertTextVisibleAtSystemOut().hasSize(72);
         }
 
-        private void useCounterWithOutpoutForStep(String output, int step) {
-            when(counter.getOutputForStep(step)).thenReturn(output);
+        private void useCountersWithOutpoutForStep(int step,
+            String outputOfFirstCounter, String outputOfSecondCounter) {
+            when(firstPart.getOutputForStep(step)).thenReturn(outputOfFirstCounter);
+            when(secondPart.getOutputForStep(step)).thenReturn(outputOfSecondCounter);
         }
     }
 

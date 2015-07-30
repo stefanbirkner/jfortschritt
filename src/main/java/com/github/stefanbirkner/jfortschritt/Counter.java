@@ -1,12 +1,11 @@
 package com.github.stefanbirkner.jfortschritt;
 
 /**
- * Optional part of a {@link ProgressLine} that displays the number of steps
- * finished and the total number of steps.
+ * Displays the number of steps finished and the total number of steps.
  *
  * @since 0.2.0
  */
-public class Counter {
+public class Counter implements ProgressLinePart {
     private int numberOfSteps;
 
     /**
@@ -15,6 +14,7 @@ public class Counter {
      * @param numberOfSteps the total number of steps.
      * @since 0.2.0
      */
+    @Override
     public void progressLineStarted(int numberOfSteps) {
         this.numberOfSteps = numberOfSteps;
     }
@@ -27,6 +27,7 @@ public class Counter {
      * @return the counter output for the specific step.
      * @since 0.2.0
      */
+    @Override
     public String getOutputForStep(int step) {
         return "(" + step + "/" + numberOfSteps + ")";
     }
