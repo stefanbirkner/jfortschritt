@@ -13,23 +13,43 @@ import static java.lang.System.out;
  * <pre>   ProgressLine progressLine = new {@code ProgressLine()};
  * progressLine.{@link #startWithNumberOfSteps(int) startWithNumberOfSteps(42)};</pre>
  * <p>It immediately prints an empty progress bar and the counter:
- * <pre>[&gt;                                                              ] (0/42)</pre>
+ * <pre>[&gt;                                                                     ]</pre>
  * <p>The width of the line is always 72 chars. Now move the progress line
  * forward.
  * <pre>   progressLine.{@link #moveForward()};</pre>
  * <p>and see the result
- * <pre>[==&gt;                                                            ] (1/42)</pre>
+ * <pre>[==&gt;                                                                   ]</pre>
  * <p>This is how a progress line looks like at the end. (It renders a new line
  * character, too. Thus additional text starts at a new line.)
- * <pre>[=============================================================&gt;] (42/42)</pre>
+ * <pre>[==================================================================== &gt;]</pre>
+ * <p>You may add a counter to the progress line.
+ * <pre>ProgressLine progressLine = new ProgressLine(new Counter());</pre>
+ * <p>This is how a progress line looks with a counter.
+ * <pre>[==&gt;                                                            ] (1/42)</pre>
  *
  * @since 0.1.0
  */
 public class ProgressLine {
     private static final int WIDTH = 72;
+    private final Counter counter;
     private int numberOfSteps;
     private boolean started = false;
     private int currentStep = 0;
+
+    /**
+     * Create a progress line with a progress bar only.
+     */
+    public ProgressLine() {
+        this(null);
+    }
+
+    /**
+     * Create a progress line with a progress bar and an optional counter.
+     * @param counter the counter (can be {@code null})
+     */
+    public ProgressLine(Counter counter) {
+        this.counter = counter;
+    }
 
     /**
      * Start the progress bar. This immediately prints an empty progress bar to
@@ -47,7 +67,13 @@ public class ProgressLine {
         assertNotAlreadyStarted();
         this.numberOfSteps = numberOfSteps;
         started = true;
+        informCounterAboutStart(numberOfSteps);
         printProgressBar();
+    }
+
+    private void informCounterAboutStart(int numberOfSteps) {
+        if (counter != null)
+            counter.progressLineStarted(numberOfSteps);
     }
 
     /**
@@ -70,7 +96,7 @@ public class ProgressLine {
     }
 
     private void printProgressBar() {
-        String finalPart = "] (" + currentStep + "/" + numberOfSteps + ")";
+        String finalPart = (counter == null) ? "]" : "] " + counter.getOutputForStep(currentStep);
         int numberOfEqualSigns = calculateNumberOfEqualSigns(finalPart);
         out.print("[");
         printCharNTimes('=', numberOfEqualSigns);

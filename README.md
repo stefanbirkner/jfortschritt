@@ -40,7 +40,7 @@ completion:
 
 It immediately prints an empty progress bar and a counter:
 
-    [>                                                              ] (0/42)
+    [>                                                                     ]
 
 The width of the line is always 72 chars. Now move the progress line forward.
 
@@ -48,12 +48,20 @@ The width of the line is always 72 chars. Now move the progress line forward.
 
 and see the result
 
-    [==>                                                            ] (1/42)
+    [==>                                                                   ]
 
-This is how a progress line looks like at the end. (It renders a new line
+This is how a progress line looks at the end. (It renders a new line
 character, too. Thus additional text starts at a new line.)
 
-    [=============================================================>] (42/42)
+    [=====================================================================>]
+
+You may add a counter to the progress line.
+
+    ProgressLine progressLine = new ProgressLine(new Counter());
+
+This is how a progress line looks with a counter.
+
+    [==>                                                            ] (1/42)
 
 
 ## Contributing
