@@ -23,11 +23,13 @@ import static java.lang.System.out;
  * character, too. Thus additional text starts at a new line.)
  * <pre>[==================================================================== &gt;]</pre>
  * <p>You may add additional parts to the progress line. E.g. JFortschritt
- * provides a {@link Counter}, but you can build your own parts by implementing
- * the interface {@link ProgressLinePart}.
- * <pre>ProgressLine progressLine = new ProgressLine(new Counter());</pre>
+ * provides a {@link Counter} and a {@link EstimatedTime} component, but you
+ * can build your own parts by implementing the interface
+ * {@link ProgressLinePart}.
+ * <pre>ProgressLine progressLine = new ProgressLine(
+ * new Counter(), new EstimatedTime());</pre>
  * <p>This is how a progress line looks with the additional parts.
- * <pre>[==&gt;                                                            ] (1/42)</pre>
+ * <pre>[==&gt;                                                    ] (1/42) eta 10s</pre>
  *
  * @since 0.1.0
  */

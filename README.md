@@ -18,7 +18,7 @@ JFortschritt is available from [Maven Central](http://search.maven.org/).
     <dependency>
       <groupId>com.github.stefanbirkner</groupId>
       <artifactId>jfortschritt</artifactId>
-      <version>0.2.0-SNAPSHOT</version>
+      <version>0.2.0</version>
     </dependency>
 
 
@@ -56,14 +56,15 @@ character, too. Thus additional text starts at a new line.)
     [=====================================================================>]
 
 You may add additional parts to the progress line. E.g. JFortschritt provides
-a counter, but you can build your own parts by implementing the interface
-`ProgressLinePart`.
+a counter and a part with the estimated time, but you can build your own parts
+by implementing the interface `ProgressLinePart`.
 
-    ProgressLine progressLine = new ProgressLine(new Counter());
+    ProgressLine progressLine = new ProgressLine(
+        new Counter(), new EstimatedTime());
 
 This is how a progress line looks with the additional parts.
 
-    [==>                                                            ] (1/42)
+    [==>                                                    ] (1/42) eta 10s
 
 
 ## Contributing
